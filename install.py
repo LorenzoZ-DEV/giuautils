@@ -4,6 +4,8 @@ import sys
 REQUIRED_PACKAGES = [
     ("re", "re"),
     ("colorama", "colorama"),
+    ("datetime", "datetime"),
+    ("locale", "locale")
 ]
 
 def install_package(package_name):
