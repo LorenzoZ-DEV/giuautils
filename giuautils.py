@@ -17,7 +17,7 @@ def mostra_ascii():
 {Fore.CYAN} ╚═════╝ ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
 
     {Fore.GREEN}Developed by Lorenzo Z 
-    {Fore.BLUE} Classe : 5A
+    {Fore.BLUE} Classe : 5A forse
     {Fore.YELLOW}Mantainer: Lorenzo Z
     """
     print(ascii_art)
