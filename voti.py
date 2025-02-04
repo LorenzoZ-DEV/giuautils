@@ -1,137 +1,74 @@
 from colorama import Fore, Style
 from tabulate import tabulate
-import time
-import sys
 
-# Dizionario con i voti delle materie
-voti = {
-    "Italiano": [4.5, 4.5],
-    "Storia": [4],
-    "Inglese": [4.5],
-    "Matematica": [6.5],
-    "Informatica": [3.5, 3, 4, 5, 3.5],
-    "Sistemi": [6.5],
-    "Tecn. prog. sis.": [6, 4.5],
-    "Gestione prog.": [6.5],
-    "Sc. motorie": [8]
-}
+class Voti:
+    def __init__(self):
+        self.voti = {
+            "Gestione Progetto": [3],
+            "Italiano": [],
+            "Storia": [],
+            "Informatica": [],
+            "Matematica": [],
+            "Inglese": [],
+            "Sistemi e Reti": [],
+            "TPST": [],
+        }
 
-# Calcolo delle materie sotto la sufficienza
-materie_sotto = [materia for materia, voti_materia in voti.items() if any(voto < 6 for voto in voti_materia)]
+    def calcola_medie(self):
+        medie = {}
+        for materia, voti in self.voti.items():
+            if voti:
+                medie[materia] = sum(voti) / len(voti)
+            else:
+                medie[materia] = None
+        return medie
 
-# Calcolo delle medie
-medie_materie = {materia: sum(voti_materia) / len(voti_materia) for materia, voti_materia in voti.items()}
-
-# Funzione per calcolare quanti voti servono per raggiungere la sufficienza
-def calcola_voti_per_sufficienza(voti_materia):
-    media_attuale = sum(voti_materia) / len(voti_materia)
-    if media_attuale >= 6:
-        return 0  # Già sufficiente
-    somma_attuale = sum(voti_materia)
-    n_voti = len(voti_materia)
-    voti_necessari = 0
-    while (somma_attuale + voti_necessari) / (n_voti + voti_necessari) < 6:
-        voti_necessari += 1
-    return voti_necessari
-
-# Funzione per mostrare un'animazione durante l'attesa
-def animazione_attesa(messaggio, durata):
-    for _ in range(durata):
-        for frame in "|/-\\":
-            sys.stdout.write(f"\r{Fore.YELLOW}{messaggio} {frame}{Style.RESET_ALL}")
-            sys.stdout.flush()
-            time.sleep(0.2)
-    sys.stdout.write("\r" + " " * len(messaggio) + "\r")
-
-# ASCII art per diverse fasi e condizioni
-def mostra_ascii_fase(fase):
-    if fase == "menu_principale":
-        print(Fore.CYAN + """
- ██████╗ ██╗██╗   ██╗ █████╗                    
-██╔════╝ ██║██║   ██║██╔══██╗                   
-██║  ███╗██║██║   ██║███████║                   
-██║   ██║██║██║   ██║██╔══██║                   
-╚██████╔╝██║╚██████╔╝██║  ██║                   
- ╚═════╝ ╚═╝ ╚═════╝ ╚═╝  ╚═╝                   
-                                                
-██╗  ██╗███████╗██╗     ██████╗ ███████╗██████╗ 
-██║  ██║██╔════╝██║     ██╔══██╗██╔════╝██╔══██╗
-███████║█████╗  ██║     ██████╔╝█████╗  ██████╔╝
-██╔══██║██╔══╝  ██║     ██╔═══╝ ██╔══╝  ██╔══██╗
-██║  ██║███████╗███████╗██║     ███████╗██║  ██║
-╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝
-""" + Style.RESET_ALL)
-    elif fase == "materie_sotto":
-        print(Fore.RED + """
-██╗    ██╗ █████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ 
-██║    ██║██╔══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ 
-██║ █╗ ██║███████║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗
-██║███╗██║██╔══██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║
-╚███╔███╔╝██║  ██║██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝
- ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
-""" + Style.RESET_ALL)
-    elif fase == "tutto_ok":
-        print(Fore.GREEN + """
- ██████╗ ██╗  ██╗
-██╔═══██╗██║ ██╔╝
-██║   ██║█████╔╝ 
-██║   ██║██╔═██╗ 
-╚██████╔╝██║  ██╗
- ╚═════╝ ╚═╝  ╚═╝
-""" + Style.RESET_ALL)
-
-# Menu principale
-mostra_ascii_fase("menu_principale")
-print("Scegli un'opzione:")
-print("1. Visualizza la media attuale e le materie sotto la sufficienza")
-print("2. Calcola quanti voti servono per la sufficienza e verifica se sei a rischio di non fare l'esame di stato")
-scelta = input("Inserisci il numero della tua scelta (1 o 2): ")
-
-if scelta == "1":
-    if len(materie_sotto) > 0:
-        mostra_ascii_fase("materie_sotto")
-    else:
-        mostra_ascii_fase("tutto_ok")
-
-    print("\nMaterie sotto la sufficienza:")
-    for materia in materie_sotto:
-        print(f"{Fore.RED}{materia}{Style.RESET_ALL}")
-    
-    print("\nTabella delle medie:")
-    table = []
-    for materia, media in medie_materie.items():
-        stato = f"{Fore.GREEN}Sufficiente{Style.RESET_ALL}" if media >= 6 else f"{Fore.RED}Insufficiente{Style.RESET_ALL}"
-        table.append([materia, f"{media:.2f}", stato])
-    print(tabulate(table, headers=["Materia", "Media", "Stato"], tablefmt="grid"))
-
-elif scelta == "2":
-    # Mostra animazione dinamica durante il calcolo
-    animazione_attesa("Calcolo in corso", 5)
-
-    # Mostra ASCII di conferma calcolo completato
-    print(Fore.GREEN + """
-██████╗ ███████╗ ██████╗██╗   ██╗██████╗ ███████╗██████╗  ██████╗ 
-██╔══██╗██╔════╝██╔════╝██║   ██║██╔══██╗██╔════╝██╔══██╗██╔═══██╗
-██████╔╝█████╗  ██║     ██║   ██║██████╔╝█████╗  ██████╔╝██║   ██║
-██╔══██╗██╔══╝  ██║     ██║   ██║██╔═══╝ ██╔══╝  ██╔══██╗██║   ██║
-██║  ██║███████╗╚██████╗╚██████╔╝██║     ███████╗██║  ██║╚██████╔╝
-╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝ 
-""" + Style.RESET_ALL)
-
-    # Costruisce i dati della tabella
-    table = []
-    for materia, voti_materia in voti.items():
-        voti_necessari = calcola_voti_per_sufficienza(voti_materia)
-        stato = "Sufficiente" if medie_materie[materia] >= 6 else "Insufficiente"
-        table.append([materia, f"{medie_materie[materia]:.2f}", stato, voti_necessari])
-
-    # Debug: verifica se i dati della tabella sono stati generati correttamente
-    if len(table) == 0:
-        print(Fore.RED + "Errore: Nessun dato trovato per costruire la tabella." + Style.RESET_ALL)
-    else:
-        print("\nCalcolo completato! Ecco i voti necessari per raggiungere la sufficienza:\n")
-        # Stampa la tabella
-        print(tabulate(table, headers=["Materia", "Media", "Stato", "Voti necessari"], tablefmt="grid"))
+    def materie_sotto_sufficienza(self):
+        materie_insufficienti = []
+        for materia, voti in self.voti.items():
+            if voti and (sum(voti) / len(voti)) < 6:
+                materie_insufficienti.append(materia)
+        return materie_insufficienti
 
 
+    def aggiungi_voto(self, materia, voto):
+        if materia in self.voti:
+            self.voti[materia].append(voto)
+            print(f"{Fore.GREEN}Voto aggiunto con successo!{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.RED}Materia non trovata!{Style.RESET_ALL}")
 
+    def rimuovi_voto(self, materia, voto):
+        if materia in self.voti:
+            if voto in self.voti[materia]:
+                self.voti[materia].remove(voto)
+                print(f"{Fore.GREEN}Voto rimosso con successo!{Style.RESET_ALL}")
+            else:
+                print(f"{Fore.RED}Voto non trovato!{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.RED}Materia non trovata!{Style.RESET_ALL}")
+
+    def mostra_dati(self):
+        materie_insufficienti = self.materie_sotto_sufficienza()
+
+        print("\nMaterie sotto la sufficienza:")
+        if materie_insufficienti:
+            for materia in materie_insufficienti:
+                print(f"{Fore.RED}{materia}{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.GREEN}Nessuna materia sotto la sufficienza!{Style.RESET_ALL}")
+
+        print("\nTabella delle medie:")
+        table = []
+        for materia, voti in self.voti.items():
+            if voti:
+                media = sum(voti) / len(voti)
+                stato = f"{Fore.GREEN}Sufficiente{Style.RESET_ALL}" if media >= 6 else f"{Fore.RED}Insufficiente{Style.RESET_ALL}"
+                table.append([materia, f"{media:.2f}", stato])
+            else:
+                table.append([materia, "Nessuna Valutazione", "N/A"])
+        print(tabulate(table, headers=["Materia", "Media", "Stato"], tablefmt="grid"))
+
+# Example usage
+voti = Voti()
+voti.mostra_dati()
